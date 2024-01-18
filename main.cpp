@@ -94,12 +94,25 @@ void test_finds_errors() {
 
 }
 
+void test_set_1() {
+    Set<int> my_set;
+    my_set.insert(8);
+    my_set.insert(8);
+    cout << boolalpha << my_set.contains(8) << endl;
+    my_set.remove(8);
+    cout << boolalpha << my_set.contains(8) << endl;
+    my_set.remove(8);
+    cout << boolalpha << my_set.contains(8) << endl;
+
+}
+
 int main() {
 //    test_build();
 //    test_find();
 //    test_hash_table_insert_resize();
 //    test_erase();
 //    test_finds();
-    test_finds_errors();
+//    test_finds_errors();
+    test_set_1();
     return 0;
 }
