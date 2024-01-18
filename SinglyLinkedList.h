@@ -10,11 +10,9 @@ using namespace std;
 
 template<typename T>
 class singly_linked_list {
-    class Node {
+    struct Node {
         T value {};
         Node* next {};
-        friend singly_linked_list;
-    public:
         Node() = default;
         explicit Node(T val) : value(val) {}
     };
@@ -139,8 +137,8 @@ public:
             temp = temp->next;
         return temp->value;
     }
-    bool empty() const { return head == nullptr; }
-    int size() const { return sz; }
+    [[nodiscard]] bool empty() const { return head == nullptr; }
+    [[nodiscard]] int size() const { return sz; }
     void clear() {
         if (head == nullptr) return;
 
