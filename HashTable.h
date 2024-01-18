@@ -30,11 +30,20 @@ class hash_table {
         Node<Pair>* data {};
         singly_linked_list<Pair>* ht {};
     public:
+        using difference_type = std::ptrdiff_t;
+        using value_type = Node<Pair>;
+        using pointer = Node<Pair>*;
+        using reference = Node<Pair>&;
+        using iterator_category = forward_iterator_tag;
+
         iterator() = default; // end
         iterator(singly_linked_list<Pair>* ht, int capacity) : ht(ht), capacity(capacity) {
             for (int i = 0; i < capacity; i++) {
-                if (ht[i].empty()) continue;
-                data = ht[i].head;
+                if (!ht[i].empty()) {
+                    data = ht[i].head;
+                    index = i;
+                    break;
+                }
             }
         } // begin
         iterator(singly_linked_list<Pair>* ht, int capacity, Node<Pair>* data) : ht(ht), capacity(capacity), data(data) {}
@@ -46,10 +55,32 @@ class hash_table {
         }
 
         iterator operator++()  {
-            iterator old = *this;
+            if (data->next != nullptr) {
+                data = data->next;
+                return *this;
+            }
+            index++;
             for (; index < capacity; ++index) {
                 if (ht[index].empty()) continue;
+                data = ht[index].head;
+                return *this;
             }
+            data = nullptr;
+            return *this;
+        }
+        iterator operator++(int) {
+            iterator old = *this;
+            if (data->next != nullptr) {
+                data = data->next;
+                return old;
+            }
+            index++;
+            for (; index < capacity; ++index) {
+                if (ht[index].empty()) continue;
+                data = ht[index].head;
+                return old;
+            }
+            data = nullptr;
             return old;
         }
         bool operator==(const iterator& other) {
@@ -265,11 +296,11 @@ public:
         ht = new singly_linked_list<Pair>[capacity];
     }
 
-    iterator begin() {
+    iterator begin() const {
         return iterator(ht, capacity);
     }
 
-    iterator end() {
+    iterator end() const {
         return iterator();
     }
 
