@@ -6,21 +6,30 @@
 #define ADS_HW2_SINGLYLINKEDLIST_H
 
 #include <stdexcept>
+#include "HashTable.h"
 using namespace std;
 
 template<typename T>
-class singly_linked_list {
-    struct Node {
-        T value {};
-        Node* next {};
-        Node() = default;
-        explicit Node(T val) : value(val) {}
-    };
+class singly_linked_list ;
 
-    Node* head {};
+template<typename T>
+class Node {
+    T value {};
+    Node* next {};
+    friend singly_linked_list<T>;
+    template<typename KeyType, typename ValueType>
+    friend class hash_table;
+public:
+    Node() = default;
+    explicit Node(T val) : value(val) {}
+};
+
+template<typename T>
+class singly_linked_list {
+    Node<T>* head {};
     int sz {};
 
-    void _reverse(Node* prev, Node* cur) {
+    void _reverse(Node<T>* prev, Node<T>* cur) {
         prev->next = nullptr;
 
         if (cur->next == nullptr) {
@@ -33,7 +42,7 @@ class singly_linked_list {
         }
     }
 
-    void _insertion_sort(Node* cur, int c) {
+    void _insertion_sort(Node<T>* cur, int c) {
         if (c == 0) return;
         _insertion_sort(cur->next, --c);
         if (cur->value > cur->next->value)
@@ -41,6 +50,8 @@ class singly_linked_list {
     }
 
 public:
+    template<typename KeyType, typename ValueType>
+    friend class hash_table;
     singly_linked_list() = default;
     singly_linked_list(const singly_linked_list& other) {
         head = other.head;
@@ -60,7 +71,7 @@ public:
     }
     T front() { return head->value; }
     T back() {
-        Node* temp = head;
+        Node<T>* temp = head;
         while (temp->next != nullptr) {
             temp = temp->next;
         }
@@ -69,7 +80,7 @@ public:
     void push_front(T val) {
         ++sz;
 
-        Node* node = new Node(val);
+        Node<T>* node = new Node<T>(val);
         node->next = head;
         head = node;
     }
@@ -77,20 +88,20 @@ public:
         ++sz;
 
         if (head == nullptr) {
-            head = new Node(val);
+            head = new Node<T>(val);
             return;
         }
-        Node* temp = head;
+        Node<T>* temp = head;
         while (temp->next != nullptr) {
             temp = temp->next;
         }
-        Node* node = new Node(val);
+        Node<T>* node = new Node<T>(val);
         temp->next = node;
     }
     T pop_front() {
         if (head == nullptr)
             throw runtime_error("Can't pop when list is empty.");
-        Node* temp = head;
+        Node<T>* temp = head;
         head = temp->next;
 
         --sz;
@@ -111,7 +122,7 @@ public:
             head = nullptr;
             return el;
         }
-        Node* temp = head;
+        Node<T>* temp = head;
         while (temp->next->next != nullptr) {
             temp = temp->next;
         }
@@ -135,11 +146,11 @@ public:
         }
 
         ++sz;
-        Node* temp = head;
+        Node<T>* temp = head;
         for (int i =  1; i < pos; ++i)
             temp = temp->next;
 
-        Node* node = new Node(val);
+        Node<T>* node = new Node<T>(val);
         node->next = temp->next;
         temp->next = node;
     }
@@ -154,11 +165,11 @@ public:
             return pop_back();
 
         --sz;
-        Node* temp = head;
+        Node<T>* temp = head;
         for (int i =  1; i < pos; ++i)
             temp = temp->next;
 
-        Node* aux = temp->next;
+        Node<T>* aux = temp->next;
         temp->next = temp->next->next;
 
         T el = aux->value;
@@ -168,7 +179,7 @@ public:
     T operator[](int pos) const {
         if (pos >= sz || pos < 0)
             throw invalid_argument("Not a valid index.");
-        Node* temp = head;
+        Node<T>* temp = head;
         for (int i = 0; i < pos; ++i)
             temp = temp->next;
         return temp->value;
@@ -176,7 +187,7 @@ public:
     T& operator[](int pos) {
         if (pos >= sz || pos < 0)
             throw invalid_argument("Not a valid index.");
-        Node* temp = head;
+        Node<T>* temp = head;
         for (int i = 0; i < pos; ++i)
             temp = temp->next;
         return temp->value;
@@ -186,7 +197,7 @@ public:
     void clear() {
         if (head == nullptr) return;
 
-        Node* temp;
+        Node<T>* temp;
         while (head->next != nullptr) {
             temp = head;
             head = temp->next;
@@ -206,8 +217,8 @@ public:
     }
     singly_linked_list<T> merge(const singly_linked_list<T>& other) {
         int i {}, j {};
-        Node* n1 = head;
-        Node* n2 = other.head;
+        Node<T>* n1 = head;
+        Node<T>* n2 = other.head;
         singly_linked_list<T> result;
         while (i < sz && j < other.sz) {
             if (n1->value > n2->value) {
@@ -235,8 +246,8 @@ public:
     }
     singly_linked_list<T> intersect(const singly_linked_list& other) {
         int i {}, j {};
-        Node* n1 = head;
-        Node* n2 = other.head;
+        Node<T>* n1 = head;
+        Node<T>* n2 = other.head;
         singly_linked_list<T> result;
         while (i < sz && j < other.sz) {
             if (n1->value == n2->value) {
@@ -256,7 +267,7 @@ public:
         return result;
     }
     friend ostream& operator<<(ostream& out, const singly_linked_list& sll) {
-        Node* temp = sll.head;
+        Node<T>* temp = sll.head;
         if (temp != nullptr) {
             out << temp->value;
             while (temp->next != nullptr) {

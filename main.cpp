@@ -106,6 +106,13 @@ void test_set_1() {
 
 }
 
+void test_begin() {
+    hash_table<char,int> ht;
+    ht.insert('A', 1);
+    auto it = ht.begin();
+    cout << *it << '\n';
+}
+
 int main() {
 //    test_build();
 //    test_find();
@@ -113,6 +120,7 @@ int main() {
 //    test_erase();
 //    test_finds();
 //    test_finds_errors();
-    test_set_1();
+//    test_set_1();
+    test_begin();
     return 0;
 }

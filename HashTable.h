@@ -24,6 +24,42 @@ class hash_table {
         }
     };
 
+    class iterator {
+        int index {};
+        int capacity {};
+        Node<Pair>* data {};
+        singly_linked_list<Pair>* ht {};
+    public:
+        iterator() = default; // end
+        iterator(singly_linked_list<Pair>* ht, int capacity) : ht(ht), capacity(capacity) {
+            for (int i = 0; i < capacity; i++) {
+                if (ht[i].empty()) continue;
+                data = ht[i].head;
+            }
+        } // begin
+        iterator(singly_linked_list<Pair>* ht, int capacity, Node<Pair>* data) : ht(ht), capacity(capacity), data(data) {}
+        Pair operator*() {
+            if (data == nullptr)
+                throw runtime_error("Iterator does not point to a value.");
+
+            return data->value;
+        }
+
+        iterator operator++()  {
+            iterator old = *this;
+            for (; index < capacity; ++index) {
+                if (ht[index].empty()) continue;
+            }
+            return old;
+        }
+        bool operator==(const iterator& other) {
+            return data == other.data;
+        }
+        bool operator!=(const iterator& other) {
+            return !(*this == other);
+        }
+    };
+
     int sz {};
     int capacity {4};
     int max_collision {3};
@@ -227,6 +263,14 @@ public:
         capacity = 4;
         delete ht;
         ht = new singly_linked_list<Pair>[capacity];
+    }
+
+    iterator begin() {
+        return iterator(ht, capacity);
+    }
+
+    iterator end() {
+        return iterator();
     }
 
     friend ostream& operator<<(ostream& out, const hash_table& htb) {
