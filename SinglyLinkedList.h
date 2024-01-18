@@ -44,6 +44,22 @@ class singly_linked_list {
 
 public:
     singly_linked_list() = default;
+    singly_linked_list(const singly_linked_list& other) {
+        head = other.head;
+        sz = other.sz;
+    }
+    singly_linked_list(singly_linked_list&& other)  noexcept {
+        head = std::__exchange(other.head, nullptr);
+        sz = std::__exchange(other.sz, 0);
+    }
+    singly_linked_list& operator=(const singly_linked_list& other) {
+        if (this == &other) return *this;
+
+        head = other.head;
+        sz = other.sz;
+
+        return *this;
+    }
     T front() { return head->value; }
     T back() {
         Node* temp = head;
@@ -107,7 +123,7 @@ public:
         temp->next = nullptr;
         return el;
     }
-    T operator[](int pos) {
+    T operator[](int pos) const {
         if (pos >= sz || pos < 0)
             throw invalid_argument("Not a valid index.");
         Node* temp = head;
@@ -115,8 +131,16 @@ public:
             temp = temp->next;
         return temp->value;
     }
-    bool empty() { return head == nullptr; }
-    int size() { return sz; }
+    T& operator[](int pos) {
+        if (pos >= sz || pos < 0)
+            throw invalid_argument("Not a valid index.");
+        Node* temp = head;
+        for (int i = 0; i < pos; ++i)
+            temp = temp->next;
+        return temp->value;
+    }
+    bool empty() const { return head == nullptr; }
+    int size() const { return sz; }
     void clear() {
         if (head == nullptr) return;
 
@@ -189,7 +213,7 @@ public:
         }
         return result;
     }
-    friend ostream& operator<<(ostream& out, singly_linked_list sll) {
+    friend ostream& operator<<(ostream& out, const singly_linked_list& sll) {
         Node* temp = sll.head;
         if (temp != nullptr) {
             out << temp->value;
