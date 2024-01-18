@@ -13,13 +13,9 @@ template<typename T>
 class singly_linked_list ;
 
 template<typename T>
-class Node {
+struct Node {
     T value {};
     Node* next {};
-    friend singly_linked_list<T>;
-    template<typename KeyType, typename ValueType>
-    friend class hash_table;
-public:
     Node() = default;
     explicit Node(T val) : value(val) {}
 };

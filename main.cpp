@@ -109,8 +109,63 @@ void test_set_1() {
 void test_begin() {
     hash_table<char,int> ht;
     ht.insert('A', 1);
-    auto it = ht.begin();
-    cout << *it << '\n';
+    ht.insert('B', 2);
+    ht.insert('C', 3);
+    ht.insert('D', 3);
+    ht.insert('E', 3);
+    cout << ht << endl;
+    cout << "---" << endl;
+    auto iter = ht.begin();
+    cout << *iter << endl;
+    ++iter;
+    cout << *iter << endl;
+    ++iter;
+    cout << *iter << endl;
+    ++iter;
+    cout << *iter << endl;
+    ++iter;
+    cout << *iter << endl;
+    ++iter;
+    cout << boolalpha << (iter == ht.begin()) << endl;
+    cout << boolalpha << (iter != ht.begin()) << endl;
+    cout << boolalpha << (iter == ht.end()) << endl;
+    cout << boolalpha << (iter != ht.end()) << endl;
+    cout << "---" << endl;
+    for (auto iter = ht.begin(); iter != ht.end(); ++iter) {
+        cout << *iter << endl;
+    }
+}
+
+void test_postincremento() {
+    hash_table<char,int> ht;
+    ht.insert('A', 1);
+    ht.insert('B', 2);
+    ht.insert('C', 3);
+    auto iter = ht.begin();
+    cout << *(iter++) << endl;
+    cout << *iter << endl;
+
+    auto iter2 = ht.begin();
+    cout << *(++iter2) << endl;
+    cout << *iter2 << endl;
+}
+
+void test_set_2() {
+    Set<int> my_set_1;
+    my_set_1.insert(8);
+    my_set_1.insert(9);
+    Set<int> my_set_2;
+    my_set_2.insert(10);
+    my_set_2.insert(11);
+    Set<int> union_set = my_set_1.set_union(my_set_2);
+    cout << union_set << endl;
+    my_set_2.insert(8);
+    Set<int> union_inter = my_set_1.set_intersect(my_set_2);
+    cout << union_inter << endl;
+    Set<int> union_dif1 = my_set_1.set_difference(my_set_2);
+    cout << union_dif1 << endl;
+    Set<int> union_dif2 = my_set_2.set_difference(my_set_1);
+    cout << union_dif2 << endl;
 }
 
 int main() {
@@ -121,6 +176,9 @@ int main() {
 //    test_finds();
 //    test_finds_errors();
 //    test_set_1();
-    test_begin();
+//    test_begin();
+//    test_postincremento();
+
+test_set_2();
     return 0;
 }
