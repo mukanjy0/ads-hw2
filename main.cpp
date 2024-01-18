@@ -22,8 +22,27 @@ void test_hash_table_insert_resize() {
     cout << ht << ht.size();
 }
 
+void test_find() {
+    hash_table<char,int> ht;
+    ht.insert('A', 1);
+    cout << ht['A'] << endl;
+    ht['A'] = 2;
+    cout << ht['A'] << endl;
+    cout << boolalpha << ht.contains('A') << endl;
+}
+
+void test_build() {
+    vector<pair<char, int>> a;
+    a.push_back(make_pair('A', 1));
+    a.push_back(make_pair('B', 2));
+    hash_table<char,int> ht(a);
+
+    cout << ht << endl;
+}
+
 int main() {
-    cout << boolalpha << (string("hello") < string("helloo")) << '\n';
-    test_hash_table_insert_resize();
+    test_build();
+//    test_find();
+//    test_hash_table_insert_resize();
     return 0;
 }

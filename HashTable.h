@@ -11,8 +11,6 @@
 #include <vector>
 using namespace std;
 
-typedef long long ll;
-
 template<typename KeyType, typename ValueType>
 class hash_table {
     struct Pair {
@@ -34,7 +32,7 @@ class hash_table {
 
     singly_linked_list<Pair>* ht {};
 
-    int _hash(KeyType key) {
+    int _hash(KeyType key) const {
         return hash<KeyType>{}(key) % capacity;
     }
 
@@ -62,30 +60,55 @@ public:
         ht = new singly_linked_list<Pair>[capacity];
     }
 
-    hash_table(const vector<KeyType> &other) {}
+    explicit hash_table(const vector<pair<KeyType, ValueType>> &other) {
+        ht = new singly_linked_list<Pair>[capacity];
+        build(other);
+    }
 
-    ~hash_table() {}
+    ~hash_table() {
+        delete ht;
+    }
 
     [[nodiscard]] int size() const { return sz; }
 
-    void build(const vector<KeyType> &other) {
-
+    void build(const vector<pair<KeyType, ValueType>> &other) {
+        for (const auto& iter: other) {
+            insert(iter.first, iter.second);
+        }
     }
 
     bool contains(KeyType key) {
-
+        int idx = _hash(key);
+        for (int i = 0; i < ht[idx].size(); i++) {
+            if (key == ht[idx][i].key) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    ValueType find(KeyType key) {
-
+    ValueType find(KeyType key) const {
+        int idx = _hash(key);
+        for (int i = 0; i < ht[idx].size(); i++) {
+            if (key == ht[idx][i].key) {
+                return ht[idx][i].value;
+            }
+        }
+        throw runtime_error("No existe la llave.");
     }
 
     ValueType operator[](KeyType key) const {
-
+        return find(key);
     }
 
     ValueType& operator[](KeyType key) {
-
+        int idx = _hash(key);
+        for (int i = 0; i < ht[idx].size(); i++) {
+            if (key == ht[idx][i].key) {
+                return ht[idx][i].value;
+            }
+        }
+        throw runtime_error("No existe la llave.");
     }
 
     bool insert(KeyType key, ValueType value) { // returns false if there was no insertion nor update
@@ -112,7 +135,9 @@ public:
     }
 
     ValueType erase(KeyType key) {
-
+        if (find(key)) {
+            
+        }
     }
 
     KeyType find_min() {
