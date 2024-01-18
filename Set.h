@@ -16,7 +16,7 @@ public:
     void insert() {
 
     }
-    void remove() {
+    bool remove() {
 
     }
     bool contains() {

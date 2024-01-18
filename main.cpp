@@ -40,9 +40,66 @@ void test_build() {
     cout << ht << endl;
 }
 
+void test_erase() {
+    vector<pair<char, int>> a;
+    a.push_back(make_pair('A', 1));
+    a.push_back(make_pair('B', 2));
+    hash_table<char,int> ht(a);
+    ht.erase('C');
+
+    cout << ht << endl;
+}
+
+void test_finds() {
+    hash_table<char,int> ht;
+    ht.insert('A', 1);
+    ht.insert('B', 2);
+    ht.insert('c', 4);
+    ht.insert('d', 4);
+    ht.insert('e', 4);
+    ht.insert('1', 4);
+
+    cout << "Test find prev\n";
+    cout << ht.find_prev('A') << endl;
+    cout << ht.find_prev('d') << endl;
+    cout << ht.find_prev('c') << endl;
+
+    cout << "Test find next\n";
+    cout << ht.find_next('A') << endl;
+    cout << ht.find_next('d') << endl;
+    cout << ht.find_next('c') << endl;
+
+    cout << "Test find min & max\n";
+    cout << ht.find_min() << endl;
+    cout << ht.find_max() << endl;
+}
+
+void test_finds_errors() {
+    hash_table<char,int> ht;
+    cout << "Test find min & max\n";
+//    cout << ht.find_min() << endl;
+//    cout << ht.find_max() << endl;
+    ht.insert('A', 1);
+    ht.insert('B', 2);
+    ht.insert('c', 4);
+    ht.insert('d', 4);
+    ht.insert('e', 4);
+    ht.insert('1', 4);
+
+    cout << "Test find prev\n";
+//    cout << ht.find_prev('1') << endl;
+
+    cout << "Test find next\n";
+    cout << ht.find_next('e') << endl;
+
+}
+
 int main() {
-    test_build();
+//    test_build();
 //    test_find();
 //    test_hash_table_insert_resize();
+//    test_erase();
+//    test_finds();
+    test_finds_errors();
     return 0;
 }

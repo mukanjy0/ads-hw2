@@ -121,6 +121,50 @@ public:
         temp->next = nullptr;
         return el;
     }
+    void insert(T val, int pos) {
+        if (pos < 0 || pos > sz)
+            throw invalid_argument("Not a valid position.");
+
+        if (pos == 0) {
+            push_front(val);
+            return;
+        }
+        if (pos == sz) {
+            push_back(val);
+            return;
+        }
+
+        ++sz;
+        Node* temp = head;
+        for (int i =  1; i < pos; ++i)
+            temp = temp->next;
+
+        Node* node = new Node(val);
+        node->next = temp->next;
+        temp->next = node;
+    }
+    T remove(int pos) {
+        if (pos < 0 || pos >= sz)
+            throw invalid_argument("Not a valid position.");
+
+        if (pos == 0)
+            return pop_front();
+
+        if (pos == sz - 1)
+            return pop_back();
+
+        --sz;
+        Node* temp = head;
+        for (int i =  1; i < pos; ++i)
+            temp = temp->next;
+
+        Node* aux = temp->next;
+        temp->next = temp->next->next;
+
+        T el = aux->value;
+        delete aux;
+        return el;
+    }
     T operator[](int pos) const {
         if (pos >= sz || pos < 0)
             throw invalid_argument("Not a valid index.");
@@ -142,7 +186,7 @@ public:
     void clear() {
         if (head == nullptr) return;
 
-        Node* temp = head;
+        Node* temp;
         while (head->next != nullptr) {
             temp = head;
             head = temp->next;

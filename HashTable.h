@@ -135,25 +135,98 @@ public:
     }
 
     ValueType erase(KeyType key) {
-        if (find(key)) {
-            
+        int ind = _hash(key);
+        for (int i = 0; i < ht[ind].size(); ++i) {
+            if (ht[ind][i].key == key) {
+                return ht[ind].remove(i).value;
+            }
         }
+        throw runtime_error("Invalid key.");
     }
 
     KeyType find_min() {
+        if (sz == 0)
+            throw runtime_error("Can't find min when hash table is empty.");
 
+        bool start = true;
+        KeyType mini {};
+        for (int i = 0; i < capacity; ++i) {
+            for (int j = 0; j < ht[i].size(); ++j) {
+                if (start) {
+                    mini = ht[i][j].key;
+                    start = false;
+                }
+                else mini = min(mini, ht[i][j].key);
+            }
+        }
+        return mini;
     }
 
     KeyType find_max() {
+        if (sz == 0)
+            throw runtime_error("Can't find max when hash table is empty.");
 
+        bool start = true;
+        KeyType maxi {};
+        for (int i = 0; i < capacity; ++i) {
+            for (int j = 0; j < ht[i].size(); ++j) {
+                if (start) {
+                    maxi = ht[i][j].key;
+                    start = false;
+                }
+                else maxi = max(maxi, ht[i][j].key);
+            }
+        }
+        return maxi;
     }
 
     KeyType find_next(KeyType key) { // upper_bound for the key
+        bool start = true;
+        KeyType nxt {};
+        for (int i = 0; i < capacity; ++i) {
+            for (int j = 0; j < ht[i].size(); ++j) {
+                if (ht[i][j].key > key) {
+                    if (start) {
+                        nxt = ht[i][j].key;
+                        start = false;
+                    }
+                    else nxt = min(nxt, ht[i][j].key);
+                }
+            }
+        }
 
+        if (start)
+            throw runtime_error("No greater key exists.");
+
+        return nxt;
     }
 
     KeyType find_prev(KeyType key) { // highest key lower than provided key
+        bool start = true;
+        KeyType prev {};
+        for (int i = 0; i < capacity; ++i) {
+            for (int j = 0; j < ht[i].size(); ++j) {
+                if (ht[i][j].key < key) {
+                    if (start) {
+                        prev = ht[i][j].key;
+                        start = false;
+                    }
+                    else prev = max(prev, ht[i][j].key);
+                }
+            }
+        }
 
+        if (start)
+            throw runtime_error("No lower key exists.");
+
+        return prev;
+    }
+
+    void clear() {
+        sz = 0;
+        capacity = 4;
+        delete ht;
+        ht = new singly_linked_list<Pair>[capacity];
     }
 
     friend ostream& operator<<(ostream& out, const hash_table& htb) {
