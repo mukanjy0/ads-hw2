@@ -45,7 +45,7 @@ void test_erase() {
     a.push_back(make_pair('A', 1));
     a.push_back(make_pair('B', 2));
     hash_table<char,int> ht(a);
-    ht.erase('C');
+    ht.erase('B');
 
     cout << ht << endl;
 }
@@ -75,6 +75,7 @@ void test_finds() {
 }
 
 void test_finds_errors() {
+    // este test es para verificar posibles errores
     hash_table<char,int> ht;
     cout << "Test find min & max\n";
 //    cout << ht.find_min() << endl;
@@ -90,7 +91,7 @@ void test_finds_errors() {
 //    cout << ht.find_prev('1') << endl;
 
     cout << "Test find next\n";
-    cout << ht.find_next('e') << endl;
+//    cout << ht.find_next('e') << endl;
 
 }
 
@@ -134,6 +135,10 @@ void test_begin() {
     for (auto iter = ht.begin(); iter != ht.end(); ++iter) {
         cout << *iter << endl;
     }
+    cout << "---" << endl;
+    for (auto iter : ht) {
+        cout << iter << endl;
+    }
 }
 
 void test_postincremento() {
@@ -174,11 +179,11 @@ int main() {
 //    test_hash_table_insert_resize();
 //    test_erase();
 //    test_finds();
-//    test_finds_errors();
+
 //    test_set_1();
 //    test_begin();
 //    test_postincremento();
 
-test_set_2();
+//    test_set_2();
     return 0;
 }
