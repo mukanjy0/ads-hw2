@@ -46,15 +46,20 @@ class hash_table {
                 }
             }
         } // begin
-        iterator(singly_linked_list<Pair>* ht, int capacity, Node<Pair>* data) : ht(ht), capacity(capacity), data(data) {}
+        iterator(singly_linked_list<Pair>* ht, int capacity, Node<Pair>* data, int index) : ht(ht), capacity(capacity), data(data), index(index) {}
         Pair operator*() {
             if (data == nullptr)
                 throw runtime_error("Iterator does not point to a value.");
 
             return data->value;
         }
+        Pair* operator->() {
+            return &(data->value);
+        }
 
         iterator operator++()  {
+            if (data == nullptr) return *this;
+
             if (data->next != nullptr) {
                 data = data->next;
                 return *this;
@@ -69,6 +74,8 @@ class hash_table {
             return *this;
         }
         iterator operator++(int) {
+            if (data == nullptr) return *this;
+
             iterator old = *this;
             if (data->next != nullptr) {
                 data = data->next;
@@ -137,11 +144,20 @@ public:
     }
 
     [[nodiscard]] int size() const { return sz; }
+    [[nodiscard]] bool empty() const { return sz == 0; }
 
     void build(const vector<pair<KeyType, ValueType>> &other) {
-        for (const auto& iter: other) {
-            insert(iter.first, iter.second);
+        for (const auto& iterator: other) {
+            insert(iterator.first, iterator.second);
         }
+    }
+
+    iterator begin() const {
+        return iterator(ht, capacity);
+    }
+
+    iterator end() const {
+        return iterator();
     }
 
     bool contains(KeyType key) {
@@ -154,18 +170,19 @@ public:
         return false;
     }
 
-    ValueType find(KeyType key) const {
+    iterator find(KeyType key) const {
         int idx = _hash(key);
-        for (int i = 0; i < ht[idx].size(); i++) {
-            if (key == ht[idx][i].key) {
-                return ht[idx][i].value;
-            }
+        Node<Pair>* temp = ht[idx].head;
+        for (int i = 0; i < ht[idx].size(); ++i) {
+            if (temp->value.key == key) return iterator(ht, capacity, temp, idx);
+            temp = temp->next;
         }
-        throw runtime_error("No existe la llave.");
+
+        return end();
     }
 
     ValueType operator[](KeyType key) const {
-        return find(key);
+        return find(key)->value;
     }
 
     ValueType& operator[](KeyType key) {
@@ -211,82 +228,62 @@ public:
         throw runtime_error("Invalid key.");
     }
 
-    KeyType find_min() {
-        if (sz == 0)
-            throw runtime_error("Can't find min when hash table is empty.");
-
-        bool start = true;
-        KeyType mini {};
-        for (int i = 0; i < capacity; ++i) {
-            for (int j = 0; j < ht[i].size(); ++j) {
-                if (start) {
-                    mini = ht[i][j].key;
-                    start = false;
-                }
-                else mini = min(mini, ht[i][j].key);
-            }
+    iterator find_min() {
+        auto min = begin();
+        for (auto it = ++begin(); it != end(); ++it) {
+            if (min->key > it->key) min = it;
         }
-        return mini;
+
+        return min;
     }
 
-    KeyType find_max() {
-        if (sz == 0)
-            throw runtime_error("Can't find max when hash table is empty.");
-
-        bool start = true;
-        KeyType maxi {};
-        for (int i = 0; i < capacity; ++i) {
-            for (int j = 0; j < ht[i].size(); ++j) {
-                if (start) {
-                    maxi = ht[i][j].key;
-                    start = false;
-                }
-                else maxi = max(maxi, ht[i][j].key);
-            }
+    iterator find_max() {
+        auto max = begin();
+        for (auto it = ++begin(); it != end(); ++it) {
+            if (max->key < it->key) max = it;
         }
-        return maxi;
+
+        return max;
     }
 
-    KeyType find_next(KeyType key) { // upper_bound for the key
-        bool start = true;
-        KeyType nxt {};
-        for (int i = 0; i < capacity; ++i) {
-            for (int j = 0; j < ht[i].size(); ++j) {
-                if (ht[i][j].key > key) {
-                    if (start) {
-                        nxt = ht[i][j].key;
-                        start = false;
-                    }
-                    else nxt = min(nxt, ht[i][j].key);
+    iterator find_next(KeyType key) { // upper_bound for the key
+        auto nxt = end();
+        for (auto it = begin(); it != end(); ++it) {
+            if (it->key > key) {
+                if (nxt == end()) {
+                    nxt = it;
+                } else {
+                    if (nxt->key > it->key) nxt = it;
                 }
             }
         }
-
-        if (start)
-            throw runtime_error("No greater key exists.");
 
         return nxt;
     }
 
-    KeyType find_prev(KeyType key) { // highest key lower than provided key
-        bool start = true;
-        KeyType prev {};
-        for (int i = 0; i < capacity; ++i) {
-            for (int j = 0; j < ht[i].size(); ++j) {
-                if (ht[i][j].key < key) {
-                    if (start) {
-                        prev = ht[i][j].key;
-                        start = false;
-                    }
-                    else prev = max(prev, ht[i][j].key);
+    iterator find_prev(KeyType key) { // highest key lower than provided key
+        auto prev = end();
+        for (auto it = begin(); it != end(); ++it) {
+            if (it->key < key) {
+                if (prev == end()) {
+                    prev = it;
+                } else {
+                    if (prev->key < it->key) prev = it;
                 }
             }
         }
 
-        if (start)
-            throw runtime_error("No lower key exists.");
-
         return prev;
+    }
+
+    singly_linked_list<Pair> iter_order() {
+        singly_linked_list<Pair> sll;
+        auto it = find_min();
+        while (it != end()) {
+            sll.push_back(*it);
+            it = find_next(it->key);
+        }
+        return sll;
     }
 
     void clear() {
@@ -294,14 +291,6 @@ public:
         capacity = 4;
         delete ht;
         ht = new singly_linked_list<Pair>[capacity];
-    }
-
-    iterator begin() const {
-        return iterator(ht, capacity);
-    }
-
-    iterator end() const {
-        return iterator();
     }
 
     friend ostream& operator<<(ostream& out, const hash_table& htb) {

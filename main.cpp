@@ -26,9 +26,12 @@ void test_find() {
     hash_table<char,int> ht;
     ht.insert('A', 1);
     cout << ht['A'] << endl;
-    ht['A'] = 2;
     cout << ht['A'] << endl;
     cout << boolalpha << ht.contains('A') << endl;
+    auto it = ht.find('A');
+    ht.insert('B', 2);
+    cout << *(it++) << endl;
+    cout << *it << endl;
 }
 
 void test_build() {
@@ -60,39 +63,18 @@ void test_finds() {
     ht.insert('1', 4);
 
     cout << "Test find prev\n";
-    cout << ht.find_prev('A') << endl;
-    cout << ht.find_prev('d') << endl;
-    cout << ht.find_prev('c') << endl;
+    cout << *ht.find_prev('A') << endl;
+    cout << *ht.find_prev('d') << endl;
+    cout << *ht.find_prev('c') << endl;
 
     cout << "Test find next\n";
-    cout << ht.find_next('A') << endl;
-    cout << ht.find_next('d') << endl;
-    cout << ht.find_next('c') << endl;
+    cout << *ht.find_next('A') << endl;
+    cout << *ht.find_next('d') << endl;
+    cout << *ht.find_next('c') << endl;
 
     cout << "Test find min & max\n";
-    cout << ht.find_min() << endl;
-    cout << ht.find_max() << endl;
-}
-
-void test_finds_errors() {
-    // este test es para verificar posibles errores
-    hash_table<char,int> ht;
-    cout << "Test find min & max\n";
-//    cout << ht.find_min() << endl;
-//    cout << ht.find_max() << endl;
-    ht.insert('A', 1);
-    ht.insert('B', 2);
-    ht.insert('c', 4);
-    ht.insert('d', 4);
-    ht.insert('e', 4);
-    ht.insert('1', 4);
-
-    cout << "Test find prev\n";
-//    cout << ht.find_prev('1') << endl;
-
-    cout << "Test find next\n";
-//    cout << ht.find_next('e') << endl;
-
+    cout << *ht.find_min() << endl;
+    cout << *ht.find_max() << endl;
 }
 
 void test_set_1() {
@@ -173,6 +155,21 @@ void test_set_2() {
     cout << union_dif2 << endl;
 }
 
+void test_iter_order() {
+    hash_table<char,int> ht;
+    random_device rd;
+    mt19937 rng(rd());
+    uniform_int_distribution<mt19937::result_type> dist26(0, 25);
+    int sz = uniform_int_distribution<int>(0, 100)(rng);
+    for (int i = 0; i < sz; ++i) {
+        ht.insert(char(97 + dist26(rng)), i);
+    }
+    cout << ht << ht.size() << '\n';
+    cout << ht.iter_order() << '\n';
+    ht.clear();
+    cout << ht;
+}
+
 int main() {
 //    test_build();
 //    test_find();
@@ -183,7 +180,7 @@ int main() {
 //    test_set_1();
 //    test_begin();
 //    test_postincremento();
-
 //    test_set_2();
+    test_iter_order();
     return 0;
 }
