@@ -171,16 +171,15 @@ void test_iter_order() {
 }
 
 int main() {
-//    test_build();
-//    test_find();
-//    test_hash_table_insert_resize();
-//    test_erase();
-//    test_finds();
-
-//    test_set_1();
-//    test_begin();
-//    test_postincremento();
-//    test_set_2();
+    test_build();
+    test_find();
+    test_hash_table_insert_resize();
+    test_erase();
+    test_finds();
+    test_set_1();
+    test_begin();
+    test_postincremento();
+    test_set_2();
     test_iter_order();
     return 0;
 }

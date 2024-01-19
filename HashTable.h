@@ -7,7 +7,6 @@
 
 #include "SinglyLinkedList.h"
 #include <functional>
-#include <climits>
 #include <vector>
 using namespace std;
 
